@@ -1,0 +1,201 @@
+
+package hackathon;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+//-------------------main body-----------------------
+public class GameWindow extends JFrame implements Runnable{
+    private Graphics db;
+    private Image dbi;
+    private String s="";
+    private int x=207,y=134,xDirection,yDirection;
+    private Image room = new ImageIcon(getClass().getResource("background.jpg")).getImage();
+    private Image bacteria1;
+    private Image bacteria2;
+    private Image bacteria3;
+    private Image player = new ImageIcon(getClass().getResource("right.png")).getImage();
+    //private Rectangle[] recs =  new Rectangle[26];
+    //private Rectangle p;
+    String test = "";
+    boolean isCollision = false;
+    //----------------- constructor------------------------
+    GameWindow(){
+        setTitle("Healthy Day");
+        setSize(700,700);
+        setVisible(true);
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addKeyListener(new TAdapter());
+        //---------------temp
+        addMouseListener(new MListener());
+        //---------------temp
+      /*  recs[0] = new Rectangle(321,486,328,15);
+        recs[24] = new Rectangle(47,486,225,10);
+        recs[25] = new Rectangle(51,363,180,10);
+        recs[1] = new Rectangle(48,216,179,10);
+        recs[2] = new Rectangle(90,344,40,10);
+        recs[3] = new Rectangle(429,346,220,10);
+        recs[4] = new Rectangle(316,31,10,329);
+        recs[5] = new Rectangle(214,46,84,41);
+        recs[6] = new Rectangle(59,49,87,120);
+        recs[7] = new Rectangle(242,89,30,15);
+        recs[8] = new Rectangle(621,240,50,40);
+        recs[9] = new Rectangle(331,136,42,60);
+        recs[10] = new Rectangle(132,314,50,38);
+        recs[11] = new Rectangle(48,295,44,53);
+        recs[12] = new Rectangle(460,115,85,90);
+        recs[13] = new Rectangle(489,208,30,30);
+        recs[14] = new Rectangle(485,82,30,30);
+        recs[15] = new Rectangle(437,148,30,26);
+        recs[16] = new Rectangle(547,150,30,30);
+        recs[17] = new Rectangle(91,382,40,40);
+        recs[18] = new Rectangle(63,440,89,50);
+        recs[19] = new Rectangle(212,297,20,70);
+        recs[20] = new Rectangle(340,217,23,26);
+        recs[21] = new Rectangle(229,362,23,26);
+        recs[22] = new Rectangle(340,103,23,26);
+        recs[23] = new Rectangle(158,51,23,24);*/
+        //p = new Rectangle(x,y,40,60);
+        
+    }
+    //-------------Buffred Image--------------------
+    @Override
+    public void paint(Graphics g){
+        dbi = createImage(getWidth(),getHeight());
+        db = dbi.getGraphics();
+        paintComponent(db);
+        g.drawImage(dbi, 0, 0, this);  
+    }
+    //-------------painting JFrame------------------
+    public void paintComponent(Graphics g){
+       g.drawImage(room, 0, 0, null);
+       g.drawImage(player, x, y, null);
+       g.setColor(Color.black);
+       g.drawString(s,350,350);
+       g.setColor(Color.red);
+      // for(int i=0 ; i<recs.length;i++){
+        //   g.drawRect(recs[i].x, recs[i].y, recs[i].width,recs[i].height);
+      // }
+       //g.drawString(test, 350, 350);
+       repaint();
+    }
+    //-------------------set direction----------------------
+    public void setXDirection(int xDir){
+            xDirection = xDir ;
+    }
+    public void setYDirection(int yDir){
+        yDirection = yDir;
+    }
+    //-------------------move the player----------------------
+    public void move(){
+            /*for(int i=0 ; i<recs.length;i++){
+                if(recs[i].intersects(p)){
+                    isCollision = true;
+                    break;
+                }
+                else
+                    isCollision = false;
+            }
+            if(isCollision){
+                setXDirection(0);
+                setYDirection(0);
+            }*/
+                x += xDirection;
+                y += yDirection;
+    }
+
+    //--------------------run thread-------------------------------
+    @Override
+    public void run() {
+        while(true){
+            try{
+                    move();
+                    Thread.sleep(5);
+                    }catch(Exception e){System.out.println(e.getMessage());}
+                }
+        
+    }
+    //---------------------keyboard listener----------------------------
+    public class TAdapter extends KeyAdapter{
+        //-----------------keypressed----------------------------
+        @Override
+        public void keyPressed(KeyEvent e){     
+            if(e.getKeyCode()==e.VK_LEFT){
+                player = new ImageIcon(getClass().getResource("char-5.gif")).getImage();
+                if(x<=25 ){
+                    x = 25; 
+                    
+                 }
+                else if(x<332&&x>290&&y<=362){
+                    x = 332; 
+                }
+                    else 
+                        setXDirection(-1);
+            }
+            if(e.getKeyCode()==e.VK_RIGHT){
+                player = new ImageIcon(getClass().getResource("player.gif")).getImage();
+                if(x>=600)
+                {
+                    x = 600;
+                }
+                else if(x>=240&&x<=328&&y<=362){
+                    x = 280; 
+                }
+                else
+                    setXDirection(1);
+            }
+            if(e.getKeyCode()==e.VK_UP){
+                player = new ImageIcon(getClass().getResource("char-4.gif")).getImage();
+                if(y<=30){
+                    y = 30;
+                }
+                    else 
+                        setYDirection(-1);
+            }
+            if(e.getKeyCode()==e.VK_DOWN){
+                 player = new ImageIcon(getClass().getResource("char-6.gif")).getImage();
+                 if(y>=630){
+                    y = 630;
+                 }
+                else
+                    setYDirection(1);
+            }
+        }
+        //-----------------keyReleased-----------------
+        @Override
+        public void keyReleased(KeyEvent e){
+            if(e.getKeyCode()==e.VK_LEFT){
+                player = new ImageIcon(getClass().getResource("left.png")).getImage();
+                setXDirection(0);
+            }
+            if(e.getKeyCode()==e.VK_RIGHT){
+                player = new ImageIcon(getClass().getResource("right.png")).getImage();
+                setXDirection(0);
+            }
+            if(e.getKeyCode()==e.VK_UP){
+                player = new ImageIcon(getClass().getResource("up.png")).getImage();
+                setYDirection(0);
+            }
+            if(e.getKeyCode()==e.VK_DOWN){
+                player = new ImageIcon(getClass().getResource("down.png")).getImage();
+                setYDirection(0);
+            }
+        }
+    }
+    //--------temp mouse listener class-------------
+    public class MListener extends MouseAdapter{
+        @Override
+        public void mousePressed(MouseEvent e){
+            s = "X: "+e.getX()+" Y: "+e.getY();
+        }
+    }
+    
+}
